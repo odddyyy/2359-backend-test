@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     user_id: DataTypes.INTEGER,
     start: DataTypes.STRING,
     end: DataTypes.STRING,
-    location: DataTypes.STRING
+    location: DataTypes.STRING,
+    recurring: DataTypes.BOOLEAN
   }, {});
   Task.associate = function(models) {
     // associations can be defined here

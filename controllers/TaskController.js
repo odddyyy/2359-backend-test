@@ -1,4 +1,5 @@
 const { Task } = require('../models')
+const handleStringRequest = require('../helpers/convertStringRequest')
 
 class TaskController {
 
@@ -28,8 +29,16 @@ class TaskController {
     }
 
     static async createTask (req, res, next) {
-        const { task, date, start, end, location } = req.body
+        let postTask
+        if (req.body.stringRequest) {
+            postTask = handleStringRequest(req.body.stringRequest)
+        } else {
+            const { task, date, start, end, location } = req.body
+            postTask = { task, date, start, end, location }
+        }
         try {
+            const taskClashed = await Task.findOne({where:{ date, start }})
+            if (taskClashed) throw ({ status: 400, msg: 'Task exist at that time' })
             await Task.create({ task, date, start, end, location, user_id: req.userData.id })
             res.status(201).json({ success: true, msg: 'Task created' })
         } catch (err) {
